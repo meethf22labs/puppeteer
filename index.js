@@ -1,22 +1,20 @@
-const puppeteer = require("puppeteer");
-//console.log(puppeteer)
-
-const takeScreenShot = async(url, outputPath) => {
-    try {
-        const browser = await puppeteer.launch({ headless: true });
-        const page = await browser.newPage();
-        await page.goto(url, { waitUntil: "networkidle2" });
-        await page.screenshot({ path: outputPath, fullPage: true });
-    
-        console.log(`screenshot saved to the path: ${outputPath}`);
-        await browser.close();
-    } catch (error) {
-        console.log('Error while taking screen shot :', error);
-    }
-}
+const cron = require('node-cron');
+require('dotenv').config();
+const { takeScreenShot } = require('./screenshot');
+const { scrapCountryInfo } = require('./scrap');
 
 
-const url = 'https://vite.dev/';
-const outputPath = 'screenshot.png';
+// screenshot
+// const url = 'https://vite.dev/';
+// const outputPath = 'screenshot.png';
+// takeScreenShot (url, outputPath);
 
-takeScreenShot(url, outputPath)
+
+// scraping
+let urlToScrap = 'https://www.scrapethissite.com/pages/simple/';
+
+cron.schedule('*/1 * * * *', () => {
+    console.log('Running Scrap Job.....');
+    scrapCountryInfo(urlToScrap);
+})
+
